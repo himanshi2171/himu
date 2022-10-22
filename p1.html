@@ -1,0 +1,118 @@
+<%-- 
+    Document   : insert
+    Created on : Oct 10, 2022, 2:23:38 AM
+    Author     : Himanshi Patel
+--%>
+
+<%@page import="java.sql.PreparedStatement"%>
+<%@page import="java.sql.Statement"%>
+<%@page import="java.sql.ResultSet"%>
+<%@page import="java.sql.Connection"%>
+<%@page import="java.sql.DriverManager"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<% 
+
+    if(request.getParameter("insert")!=null)
+    {
+        String name = request.getParameter("stname");
+        String course = request.getParameter("course");
+        String fee = request.getParameter("fee");
+        
+        Connection con;
+        PreparedStatement pst;
+        
+        
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        con = DriverManager.getConnection("jdbc:mysql://localhost:3306/crud_op_jsp?zeroDateTimeBehavior=CONVERT_TO_NULL","root","");
+                                
+        pst = con.prepareStatement("insert into records(stname,course,fee)values(?,?,?)");
+        pst.setString(1, name);
+        pst.setString(2, course);
+        pst.setString(3, fee);
+        pst.executeUpdate();  
+        
+        %> 
+    <script>   
+        alert("Record Adddeddddd");     
+    </script> 
+    <%             
+    }
+   %>
+
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+  </head>
+  <body>
+  
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+  
+   
+   <form class="row g-3 needs-validation" novalidate>
+   
+    <div class="col-md-4 ">
+        
+          <label class="form-label">Student Name</label>
+          <input type="text" class="form-control" placeholder="Enter Student Name" name="stname" id="stname" required><br/>
+ 
+   
+          <label class="form-label">Course</label>
+          <input type="text" class="form-control" placeholder="Enter Course Name" name="course" id="course" required></br>
+          
+
+  
+          <label class="form-label">fee</label>
+          <input type="text" class="form-control" placeholder="Enter Student fees" name="fee" id="fee" required></br>
+          
+          <div align="center">              
+              <button type="insert" class="btn btn-outline-secondary" id="insert" value="insert" name="insert" >Insert</button>
+              <button type="reset" class="btn btn-outline-secondary" id="reset" value="reset" name="reset" >RESET</button></br>
+          </div>
+          
+    </div>
+       <div class="col-md-2 ">
+          
+       </div>
+       <div class="col-md-6 ">
+           <table border="1" cellpadding ="0" width="100%">
+               <tr>
+                <th>Student Name</th>
+                <th>Course</th>
+                <th>Fees</th>
+                <th>Edit</th>
+                <th>Delete</th>
+               </tr>
+               
+               <%
+                   Class.forName("com.mysql.cj.jdbc.Driver");
+                                
+                   Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/crud_op_jsp?zeroDateTimeBehavior=CONVERT_TO_NULL", "root", null);
+                   Statement st=con.createStatement();
+                   ResultSet rs=st.executeQuery("select * from records");
+                   
+                   while(rs.next())
+                   {
+                       String id=rs.getString("id");
+                       %>
+                       <tr>
+                          
+                           <td><%=rs.getString("stname")%></td>
+                           <td><%=rs.getString("course")%></td>
+                           <td><%=rs.getString("fee")%></td>
+                           <td><a href="update.jsp?id=<%=id%>">Edit</a></td>
+                           <td><a href="delete.jsp?id=<%=id%>">Delete</a></td>
+                       </tr>
+                       <%
+                   }
+                   %>
+           </table>
+       </div>
+ 
+   </form>
+  </body>
+</html>
